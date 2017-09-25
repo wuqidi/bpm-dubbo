@@ -499,6 +499,9 @@
 			<version>1.10</version>
 		</dependency>
 		<!-- 上传组件包 end -->
+		
+		<!-- 本地jar包 -->
+		<!-- ./本地jar包 -->
 	</dependencies>
 
 

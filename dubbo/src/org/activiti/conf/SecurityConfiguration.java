@@ -19,7 +19,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public AuthenticationProvider authenticationProvider() {
         return new BasicAuthenticationProvider();
     }
-
+/qerqwerqwerqwerqw
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authenticationProvider(authenticationProvider())
