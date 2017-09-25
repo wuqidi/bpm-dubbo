@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+        
+	<!--要调度的对象-->
+	<bean id="jobBean" class="com.wuqidi.common.quartz.QuartzNotes" />
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="jobBean"/>
+		<property name="targetMethod" value="execute"/><!-- 执行"jobBean"中的execute方法 -->
+		<property name="concurrent" value="false"/><!--将并发设置为false-->
+	</bean>
+	<!-- ======================== 调度触发器 ======================== --> 
+	<bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"><!-- 定义 Job 何时执行 -->
+ 		<property name="jobDetail" ref="jobDetail" />
+        <property name="cronExpression" value="0/3 * * * * ?" />
+	</bean>
+	<!-- ======================== 调度工厂 ======================== --> 
+	<!--  总管理类如果将lazy-init='false'那么容器启动就会执行调度程序   -->
+	<bean id="startQuertz" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false" >
+ 		<property name="triggers">
+ 			<list>
+				<ref bean="trigger" /><!--作业调度器,list下可加入其他的调度器-->
+ 			</list>
+		</property>
+	</bean>
+
+</beans>

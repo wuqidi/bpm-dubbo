@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 配置流程引擎配置信息对象 -->
+	<!-- Activiti begin -->
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="databaseSchemaUpdate" value="true" />
+		<property name="jobExecutorActivate" value="false" /><!-- 该参数将启用定时相关的功能 -->
+		<property name="history" value="full" />
+		
+        <!-- 生成流程图的字体 -->
+        <property name="activityFontName"  value="宋体" />  
+        <property name="labelFontName"  value="宋体" />
+        <property name="annotationFontName" value="宋体"/><!-- 5.21.0 新增参数 -->
+        
+        <!-- 缓存支持 -->
+        <property name="processDefinitionCache" ref="actCache"/>
+        
+        
+        <!-- 自动部署已经设置的bpm 注：自动识别最新包-->
+        <property name="deploymentResources" value="classpath:/deployments/**/*.zip " />
+        
+        <!-- 配置数据库连接 ，如果后续需要配置统一数据源把上面的datasource注释取消即可。@泥猴桃 -->
+<!-- 		<property name="jdbcDriver" value="com.mysql.jdbc.Driver"></property>
+		<property name="jdbcUrl" value="jdbc:mysql://172.16.67.70:3306/ioc_oa?createDatabaseIfNotExist=true&amp;
+	 	 useUnicode=true&amp;characterEncoding=utf8"></property>
+		<property name="jdbcUsername" value="root"></property>
+		<property name="jdbcPassword" value="root"></property> --> 
+		
+		<!-- UUID作为主键生成策略 -->
+		<!-- <property name="idGenerator" ref="uuidGenerator" /> -->
+		
+		<!-- mail -->
+        <!-- <property name="mailServerHost" value="localhost"/>
+        <property name="mailServerUsername" value="kafeitu"/>
+        <property name="mailServerPassword" value="000000"/>
+        <property name="mailServerPort" value="2025"/> -->
+		
+		<!-- 全局监听器  -->
+        <!-- <property name="eventListeners">
+	        <list>
+	            <ref bean="globalEventListener"/>
+	        </list>
+        </property> -->
+        
+		<!-- 自定义表单字段类型 -->
+		<!-- <property name="customFormTypes">
+			<list>
+				<bean class="me.kafeitu.demo.activiti.activiti.form.UsersFormType" />
+			</list>
+		</property> -->
+		
+		<!-- 自定义用户权限 ，必须重新实现用户和组的相应方法-->
+		<!-- <property name="customSessionFactories"> 
+			<list>
+				<bean class="com.thinkgem.jeesite.modules.act.service.ext.ActUserEntityServiceFactory"/>
+				<bean class="com.thinkgem.jeesite.modules.act.service.ext.ActGroupEntityServiceFactory"/>
+			</list>
+		</property> -->
+		
+	</bean>
+	
+	<!-- 缓存 -->
+	<bean id="actCache" class="com.wuqidi.common.cache.DistributedCache" >
+		<property name="jedisPoolManager" ref="jedisPoolManager" />
+	</bean>
+
+	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
+	</bean>
+
+	<bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+	<bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+	<bean id="formService" factory-bean="processEngine" factory-method="getFormService" />
+	<bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
+	<bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+	<bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+	<bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+	
+	<!--流程全局事件处理器 -->
+	<!-- <bean id="globalEventListener" class="com.wuqidi.service.activiti.listener.GlobalEventListener" />   -->
+	<!-- 集成REST服务需要的bean -->
+    <bean id="restResponseFactory" class="org.activiti.rest.service.api.RestResponseFactory" />
+    <bean id="contentTypeResolver" class="org.activiti.rest.common.application.DefaultContentTypeResolver" />
+	
+	<!-- Activiti end -->
+</beans>

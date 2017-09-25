@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 1999-2011 Alibaba Group. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd  
+        http://code.alibabatech.com/schema/dubbo   
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd   
+        ">
+	<!-- 提供方应用信息，用于计算依赖关系 -->
+	<dubbo:application name="activiti-provider" owner="wuqidi"
+		organization="IOC" />
+
+	<!-- 注册中心暴露服务地址 -->
+	<dubbo:registry group="dubbo"
+		address="zookeeper://127.0.0.1:2181?client=zkclient" check="false" />
+
+	<!-- 用dubbo协议在20880端口暴露服务 -->
+	<dubbo:protocol name="dubbo" port="20880" />
+	<dubbo:provider dispatcher="all" timeout="50000"
+		threadpool="fixed" threads="500" accepts="1000" />
+		
+	<!-- activiti对外开放的七大服务 -->
+    <dubbo:service interface="org.activiti.engine.RepositoryService" ref="repositoryService"/>
+    <dubbo:service interface="org.activiti.engine.RuntimeService" ref="runtimeService"/>
+	<dubbo:service interface="org.activiti.engine.FormService" ref="formService"/>
+	<dubbo:service interface="org.activiti.engine.IdentityService" ref="identityService"/>
+	<dubbo:service interface="org.activiti.engine.TaskService" ref="taskService"/>
+	<dubbo:service interface="org.activiti.engine.HistoryService" ref="historyService"/>
+	<dubbo:service interface="org.activiti.engine.ManagementService" ref="managementService"/>
+    <!-- ./activiti对外开放的七大服务 -->
+    
+	<!-- 扫描注解包路径，多个包用逗号分隔，不填pacakge表示扫描当前ApplicationContext中所有的类 
+	<dubbo:annotation package="com.alibaba" />-->
+</beans>
